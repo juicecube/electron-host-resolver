@@ -6,7 +6,7 @@ const hostIpMap = (function(): Record<string, string> {
   const rules = getHostResolverRules();
   const hostIpMap: Record<string, string> = {};
   if (rules) {
-    rules.split(/\s*,\s*/).forEach(function(item) {
+    rules.split(/\s*,\s*/).forEach(function(item): void {
       const pair = item
         .trim()
         .replace(/^MAP /, '')
@@ -43,7 +43,7 @@ export function resolveHostname(hostname: string): Promise<string> {
   }
 
   if (!promiseMap[hostname]) {
-    promiseMap[hostname] = new Promise(function(resolve) {
+    promiseMap[hostname] = new Promise(function(resolve): void {
       if (hostIpMap[hostname]) {
         resolve(hostIpMap[hostname]);
         return;
@@ -53,25 +53,25 @@ export function resolveHostname(hostname: string): Promise<string> {
         url: 'https://' + hostname,
         method: 'HEAD',
       });
-      req.on('redirect', function() {
+      req.on('redirect', function(): void {
         resolve(hostname);
         resolved = true;
       });
-      req.on('response', function() {
+      req.on('response', function(): void {
         resolve(hostname);
         resolved = true;
       });
-      req.on('close', function() {
+      req.on('close', function(): void {
         if (!resolved) {
           const dnsReq = net.request(CONFIG.resolver(hostname));
           dnsReq.on('response', function(res) {
             const chunk: Array<Buffer> = [];
             let size = 0;
-            res.on('data', function(data) {
+            res.on('data', function(data): void {
               chunk.push(data);
               size += data.length;
             });
-            res.on('end', function() {
+            res.on('end', function(): void {
               try {
                 const data = JSON.parse(Buffer.concat(chunk, size).toString());
                 if (data.ips[0]) {
@@ -85,11 +85,11 @@ export function resolveHostname(hostname: string): Promise<string> {
                 resolve(hostname);
               }
             });
-            res.on('aborted', function() {
+            res.on('aborted', function(): void {
               promiseMap[hostname] = null;
               resolve(hostname);
             });
-            res.on('error', function() {
+            res.on('error', function(): void {
               promiseMap[hostname] = null;
               resolve(hostname);
             });
@@ -97,7 +97,7 @@ export function resolveHostname(hostname: string): Promise<string> {
           dnsReq.end();
         }
       });
-      req.on('error', function() {
+      req.on('error', function(): void {
         //
       });
       req.end();
