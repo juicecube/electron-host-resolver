@@ -1,0 +1,54 @@
+{
+  "name": "@mlz/electron-host-resolver",
+  "version": "0.1.0",
+  "description": "@mlz/electron-host-resolver",
+  "homepage": "https://github.com/juicecube/electron-host-resolver",
+  "author": {
+    "name": "Gary Wang",
+    "email": "webyom@gmail.com",
+    "url": "http://webyom.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juicecube/electron-host-resolver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/juicecube/electron-host-resolver/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/juicecube/electron-host-resolver/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "dist/lib/index.js",
+  "module": "dist/es/index.js",
+  "scripts": {
+    "build:lib": "tsc -d -m commonjs --outDir dist/lib",
+    "build:es": "tsc -d -m esNext --outDir dist/es",
+    "build": "npm run build:lib && npm run build:es",
+    "eslint": "eslint src/*.ts src/**/*.ts",
+    "eslint:fix": "eslint src/*.ts src/**/*.ts --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run eslint"
+    }
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "electron": ">=1.7.5"
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@typescript-eslint/eslint-plugin": "^2.5.0",
+    "@typescript-eslint/parser": "^2.5.0",
+    "eslint": "^6.5.1",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "prettier": "^1.19.1",
+    "typescript": "^3.6.4"
+  }
+}

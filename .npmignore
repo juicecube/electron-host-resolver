@@ -1,0 +1,13 @@
+/src/
+/types/
+*.map
+.editorconfig
+.eslintignore
+.eslintrc.json
+.gitignore
+.npmignore
+.prettierignore
+.prettierrc.json
+tsconfig.json
+package-lock.json
+yarn.lock
