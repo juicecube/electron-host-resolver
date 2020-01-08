@@ -114,10 +114,6 @@ export function resolveAllHostnames(): Promise<string[][]> {
   if (!CONFIG) {
     throw new Error('please config first!');
   }
-  const rules = getHostResolverRules();
-  if (rules) {
-    return Promise.resolve([]);
-  }
   return Promise.all(
     CONFIG.hostnames.map(function(hostname: string): Promise<string[]> {
       return resolveHostname(hostname).then(function(res: string): string[] {
