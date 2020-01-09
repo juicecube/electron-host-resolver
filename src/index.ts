@@ -22,6 +22,7 @@ const hostIpMap = (function(): Record<string, string> {
 export type HostResolverConfig = {
   hostnames: Array<string>;
   resolver: (hostname: string) => string;
+  timeout?: number;
 };
 
 let CONFIG: HostResolverConfig;
@@ -34,7 +35,9 @@ export function configHostResolver(conf: HostResolverConfig): void {
   if (!Array.isArray(conf.hostnames)) {
     throw new Error('hostnames array is missing!');
   }
+
   CONFIG = conf;
+  CONFIG.timeout = CONFIG.timeout > 0 ? CONFIG.timeout : 3000;
 }
 
 export function resolveHostname(hostname: string): Promise<string> {
@@ -61,7 +64,14 @@ export function resolveHostname(hostname: string): Promise<string> {
         resolve(hostname);
         resolved = true;
       });
-      req.on('close', function(): void {
+      req.on('error', function(): void {
+        resolved = false;
+      });
+      req.on('close', callback);
+      req.end();
+      const toRef = setTimeout(callback, CONFIG.timeout);
+      function callback(): void {
+        clearTimeout(toRef);
         if (!resolved) {
           const dnsReq = net.request(CONFIG.resolver(hostname));
           dnsReq.on('response', function(res) {
@@ -96,11 +106,7 @@ export function resolveHostname(hostname: string): Promise<string> {
           });
           dnsReq.end();
         }
-      });
-      req.on('error', function(): void {
-        //
-      });
-      req.end();
+      }
     });
   }
   return promiseMap[hostname];
