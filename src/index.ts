@@ -104,6 +104,10 @@ export function resolveHostname(hostname: string): Promise<string> {
               resolve(hostname);
             });
           });
+          dnsReq.on('error', function(): void {
+            promiseMap[hostname] = null;
+            resolve(hostname);
+          });
           dnsReq.end();
         }
       }
