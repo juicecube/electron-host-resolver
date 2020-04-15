@@ -67,6 +67,9 @@ export function resolveHostname(hostname: string): Promise<string> {
       req.on('error', function(): void {
         resolved = false;
       });
+      req.on('abort', function(): void {
+        resolved = false;
+      });
       req.on('close', callback);
       req.end();
       const toRef = setTimeout(callback, CONFIG.timeout);
@@ -105,6 +108,10 @@ export function resolveHostname(hostname: string): Promise<string> {
             });
           });
           dnsReq.on('error', function(): void {
+            promiseMap[hostname] = null;
+            resolve(hostname);
+          });
+          dnsReq.on('abort', function(): void {
             promiseMap[hostname] = null;
             resolve(hostname);
           });
