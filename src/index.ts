@@ -37,7 +37,7 @@ export function configHostResolver(conf: HostResolverConfig): void {
   }
 
   CONFIG = conf;
-  CONFIG.timeout = CONFIG.timeout > 0 ? CONFIG.timeout : 3000;
+  CONFIG.timeout = CONFIG.timeout > 0 ? CONFIG.timeout : 30 * 1000;
 }
 
 export function resolveHostname(hostname: string): Promise<string> {
@@ -59,21 +59,29 @@ export function resolveHostname(hostname: string): Promise<string> {
       req.on('redirect', function(): void {
         resolve(hostname);
         resolved = true;
+        finish();
       });
       req.on('response', function(): void {
         resolve(hostname);
         resolved = true;
+        finish();
       });
       req.on('error', function(): void {
         resolved = false;
+        finish();
       });
       req.on('abort', function(): void {
         resolved = false;
+        finish();
       });
-      req.on('close', callback);
       req.end();
-      const toRef = setTimeout(callback, CONFIG.timeout);
-      function callback(): void {
+      const toRef = setTimeout(finish, CONFIG.timeout);
+      let finished = false;
+      function finish(): void {
+        if (finished) {
+          return;
+        }
+        finished = true;
         clearTimeout(toRef);
         if (!resolved) {
           const dnsReq = net.request(CONFIG.resolver(hostname));

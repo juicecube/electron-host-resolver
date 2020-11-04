@@ -1,6 +1,6 @@
 {
   "name": "@mlz/electron-host-resolver",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "@mlz/electron-host-resolver",
   "homepage": "https://github.com/juicecube/electron-host-resolver",
   "author": {
